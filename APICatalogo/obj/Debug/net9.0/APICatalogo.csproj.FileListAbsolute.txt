@@ -105,3 +105,4 @@ C:\Projetos\APICatalogo\APICatalogo\obj\Debug\net9.0\refint\APICatalogo.dll
 C:\Projetos\APICatalogo\APICatalogo\obj\Debug\net9.0\APICatalogo.pdb
 C:\Projetos\APICatalogo\APICatalogo\obj\Debug\net9.0\APICatalogo.genruntimeconfig.cache
 C:\Projetos\APICatalogo\APICatalogo\obj\Debug\net9.0\ref\APICatalogo.dll
+C:\Projetos\APICatalogo\APICatalogo\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

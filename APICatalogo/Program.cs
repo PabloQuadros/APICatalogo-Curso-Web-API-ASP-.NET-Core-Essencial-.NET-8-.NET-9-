@@ -1,5 +1,6 @@
 using APICatalogo.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options => 
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -19,6 +21,21 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwaggerUI(options =>
                 options.SwaggerEndpoint("/openapi/v1.json", "weater api"));
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        DbInitializer.Initialize(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ocorreu um erro ao popular o banco de dados.");
+    }
 }
 
 app.UseHttpsRedirection();
