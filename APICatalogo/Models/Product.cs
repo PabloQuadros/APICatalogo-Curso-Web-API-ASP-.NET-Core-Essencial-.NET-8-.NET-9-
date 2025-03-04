@@ -1,6 +1,6 @@
 ﻿namespace APICatalogo.Models;
 
-public class Produt
+public class Product
 {
     public int ProductId { get; set; }
     public string? Name { get; set; }
@@ -9,4 +9,6 @@ public class Produt
     public string? ImageUrl { get; set; }
     public float Stock { get; set; }
     public DateTime CreateDate { get; set; }
+    public int CategoryId { get; set; }
+    public Category Category { get; set; }
 }
