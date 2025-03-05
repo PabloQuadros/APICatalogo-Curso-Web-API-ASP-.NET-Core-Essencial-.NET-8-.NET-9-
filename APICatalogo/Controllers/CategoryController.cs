@@ -3,6 +3,7 @@ using APICatalogo.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace APICatalogo.Controllers;
 
@@ -18,15 +19,15 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Category>> Get()
+    public async Task<ActionResult<IEnumerable<Category>>> Get()
     {
-        return _context.Categories.ToList();
+        return await _context.Categories.ToListAsync();
     }
 
     [HttpGet("{id:int}", Name = "GetCategoryById")]
-    public ActionResult<Category> Get(int id)
+    public async Task<ActionResult<Category>> Get(int id)
     {
-        var Category = _context.Categories.FirstOrDefault(p => p.CategoryId == id);
+        var Category = await _context.Categories.FirstOrDefaultAsync(p => p.CategoryId == id);
 
         if (Category == null)
         {
@@ -36,41 +37,41 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult Post(Category Category)
+    public async Task<ActionResult> Post(Category Category)
     {
         if (Category is null)
             return BadRequest();
 
-        _context.Categories.Add(Category);
-        _context.SaveChanges();
+        await _context.Categories.AddAsync(Category);
+        await _context.SaveChangesAsync();
 
         return new CreatedAtRouteResult("GetCategoryById",
             new { id = Category.CategoryId }, Category);
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult Put(int id, Category Category)
+    public async Task<ActionResult> Put(int id, Category Category)
     {
         if (id != Category.CategoryId)
         {
             return BadRequest();
         }
         _context.Entry(Category).State = EntityState.Modified;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return Ok(Category);
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult Delete(int id)
+    public async Task<ActionResult> Delete(int id)
     {
-        var Category = _context.Categories.FirstOrDefault(p => p.CategoryId == id);
+        var Category = await _context.Categories.FirstOrDefaultAsync(p => p.CategoryId == id);
 
         if (Category == null)
         {
             return NotFound();
         }
         _context.Categories.Remove(Category);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return Ok(Category);
     }
 

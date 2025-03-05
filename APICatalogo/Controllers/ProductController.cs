@@ -17,9 +17,9 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Product>> Get()
+    public async Task<ActionResult<IEnumerable<Product>>> Get()
     {
-        var products = _context.Products.ToList();
+        var products = await _context.Products.ToListAsync();
         if(products is null)
         {
             return NotFound();
@@ -28,9 +28,9 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("{id:int}", Name= "GetProductById")]
-    public ActionResult<Product> Get(int id)
+    public async Task<ActionResult<Product>> Get(int id)
     {
-        var product = _context.Products.FirstOrDefault(p => p.ProductId == id);
+        var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
         if (product is null)
         {
             return NotFound();
@@ -40,40 +40,40 @@ public class ProductController : ControllerBase
 
 
     [HttpPost]
-    public ActionResult Post(Product product)
+    public async Task<ActionResult> Post(Product product)
     {
         if(product is null)
         {
             return BadRequest();
         }
-        _context.Products.Add(product);
-        _context.SaveChanges();
+        await _context.Products.AddAsync(product);
+        await _context.SaveChangesAsync();
         return new CreatedAtRouteResult("GetProductById", new { id = product.ProductId }, product);
 
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult Put(int id, Product product)
+    public async Task<ActionResult> Put(int id, Product product)
     {
         if (id != product.ProductId)
         {
             return BadRequest();
         }
         _context.Entry(product).State = EntityState.Modified;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return Ok(product);
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult Delete(int id)
+    public async Task<ActionResult> Delete(int id)
     {
-        var product = _context.Products.FirstOrDefault(p => p.ProductId == id);
+        var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
         if(product is null)
         {
             return BadRequest();
         }
         _context.Products.Remove(product);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return Ok(product);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace APICatalogo.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace APICatalogo.Models;
 
 public class Product
 {
@@ -10,5 +12,6 @@ public class Product
     public float Stock { get; set; }
     public DateTime CreateDate { get; set; }
     public int CategoryId { get; set; }
+    [JsonIgnore]
     public Category Category { get; set; }
 }
