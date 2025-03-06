@@ -1,4 +1,5 @@
 using APICatalogo.Context;
+using APICatalogo.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -21,6 +22,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwaggerUI(options =>
                 options.SwaggerEndpoint("/openapi/v1.json", "weater api"));
+    app.ConfigureExceptionHandler();
 }
 
 using (var scope = app.Services.CreateScope())
