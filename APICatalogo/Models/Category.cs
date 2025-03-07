@@ -11,7 +11,7 @@ public class Category : IValidatableObject
     public string? ImageUrl { get; set; }
     public ICollection<Product> Products { get; set; }
 
-    public IEnumerable<ValidationResult> Validate(IValidationContext validationConterxt)
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationConterxt)
     {
         if(!string.IsNullOrEmpty(this.Name))
         {
@@ -23,5 +23,4 @@ public class Category : IValidatableObject
             }
         }
     }
-
 }
