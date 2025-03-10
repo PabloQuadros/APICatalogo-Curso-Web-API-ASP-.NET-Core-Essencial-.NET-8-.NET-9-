@@ -1,5 +1,6 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.Models;
+using APICatalogo.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,68 +12,60 @@ namespace APICatalogo.Controllers;
 [ApiController]
 public class CategoriesController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly ICategoryRepository _repository;
 
-    public CategoriesController(AppDbContext context)
+    public CategoriesController(ICategoryRepository repository)
     {
-        _context = context;
+        _repository = repository;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Category>>> Get()
+    public ActionResult<IEnumerable<Category>> Get()
     {
-        return await _context.Categories.ToListAsync();
+        var categories = _repository.GetGategories();
+        return Ok(categories);
     }
 
     [HttpGet("{id:int}", Name = "GetCategoryById")]
-    public async Task<ActionResult<Category>> Get(int id)
+    public ActionResult<Category> Get(int id)
     {
-        var Category = await _context.Categories.FirstOrDefaultAsync(p => p.CategoryId == id);
+        var category = _repository.GetCategory(id);
 
-        if (Category == null)
+        if (category == null)
         {
             return NotFound();
         }
-        return Ok(Category);
+        return Ok(category);
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post(Category Category)
+    public ActionResult Post(Category category)
     {
-        if (Category is null)
+        if (category is null)
             return BadRequest();
 
-        await _context.Categories.AddAsync(Category);
-        await _context.SaveChangesAsync();
+        var createdCategory = _repository.Create(category);
 
         return new CreatedAtRouteResult("GetCategoryById",
-            new { id = Category.CategoryId }, Category);
+            new { id = createdCategory.CategoryId }, createdCategory);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult> Put(int id, Category Category)
+    public  ActionResult Put(int id, Category category)
     {
-        if (id != Category.CategoryId)
+        if (id != category.CategoryId)
         {
             return BadRequest();
         }
-        _context.Entry(Category).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
-        return Ok(Category);
+        var updatedCategory = _repository.Update(category);
+        return Ok(updatedCategory);
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult> Delete(int id)
+    public ActionResult Delete(int id)
     {
-        var Category = await _context.Categories.FirstOrDefaultAsync(p => p.CategoryId == id);
-
-        if (Category == null)
-        {
-            return NotFound();
-        }
-        _context.Categories.Remove(Category);
-        await _context.SaveChangesAsync();
-        return Ok(Category);
+        var category = _repository.GetCategory(id);
+        return category is null ? NotFound() : Ok(_repository.Delete(id));
     }
 
 }
