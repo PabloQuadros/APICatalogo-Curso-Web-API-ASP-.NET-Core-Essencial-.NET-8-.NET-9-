@@ -2,11 +2,7 @@
 
 namespace APICatalogo.Repositories;
 
-public interface IProductRepository
+public interface IProductRepository : IRepository<Product>
 {
-    IEnumerable<Product> GetProducts();
-    Product GetProduct(int id);
-    Product Create(Product product);
-    Product Update(Product product);
-    Product Delete(int id);
+    IEnumerable<Product> GetProductsByCategory(int categoryId);
 }

@@ -10,30 +10,44 @@ namespace APICatalogo.Controllers;
 [Route("[controller]")]
 public class ProductController : ControllerBase
 {
-    private readonly IProductRepository _repository;
+    private readonly IRepository<Product> _repository;
+    private readonly IProductRepository _productRepository;
 
-    public ProductController(IProductRepository repository)
+    public ProductController(IRepository<Product> repository, IProductRepository productRepository)
     {
         _repository = repository;
+        _productRepository = productRepository;
     }
 
     [HttpGet]
     public ActionResult<IEnumerable<Product>> Get()
     {
-        var products = _repository.GetProducts();
+        var products = _repository.GetAll();
         return Ok(products);
     }
 
     [HttpGet("{id:int}", Name= "GetProductById")]
     public ActionResult<Product> Get(int id)
     {
-        var product = _repository.GetProduct(id);
+        var product = _repository.Get(p => p.ProductId == id);
 
         if (product == null)
         {
             return NotFound();
         }
         return Ok(product);
+    }
+
+    [HttpGet("products/{id:int}")]
+    public ActionResult<Product> GetProductsByCategory(int id)
+    {
+        var products = _productRepository.GetProductsByCategory(id);
+
+        if (products == null)
+        {
+            return NotFound();
+        }
+        return Ok(products);
     }
 
 
@@ -62,7 +76,7 @@ public class ProductController : ControllerBase
     [HttpDelete("{id:int}")]
     public ActionResult Delete(int id)
     {
-        var product = _repository.GetProduct(id);
-        return product is null ? NotFound() : Ok(_repository.Delete(id));
+        var product = _repository.Get(p => p.ProductId == id);
+        return product is null ? NotFound() : Ok(_repository.Delete(product));
     }
 }

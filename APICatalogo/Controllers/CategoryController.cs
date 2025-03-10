@@ -12,9 +12,9 @@ namespace APICatalogo.Controllers;
 [ApiController]
 public class CategoriesController : ControllerBase
 {
-    private readonly ICategoryRepository _repository;
+    private readonly IRepository<Category> _repository;
 
-    public CategoriesController(ICategoryRepository repository)
+    public CategoriesController(IRepository<Category> repository)
     {
         _repository = repository;
     }
@@ -22,14 +22,14 @@ public class CategoriesController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Category>> Get()
     {
-        var categories = _repository.GetGategories();
+        var categories = _repository.GetAll();
         return Ok(categories);
     }
 
     [HttpGet("{id:int}", Name = "GetCategoryById")]
     public ActionResult<Category> Get(int id)
     {
-        var category = _repository.GetCategory(id);
+        var category = _repository.Get(c => c.CategoryId == id);
 
         if (category == null)
         {
@@ -64,8 +64,8 @@ public class CategoriesController : ControllerBase
     [HttpDelete("{id:int}")]
     public ActionResult Delete(int id)
     {
-        var category = _repository.GetCategory(id);
-        return category is null ? NotFound() : Ok(_repository.Delete(id));
+        var category = _repository.Get(c => c.CategoryId == id);
+        return category is null ? NotFound() : Ok(_repository.Delete(category));
     }
 
 }
