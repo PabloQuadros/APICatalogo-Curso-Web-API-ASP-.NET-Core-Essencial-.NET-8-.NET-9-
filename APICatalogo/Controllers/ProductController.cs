@@ -10,13 +10,11 @@ namespace APICatalogo.Controllers;
 [Route("[controller]")]
 public class ProductController : ControllerBase
 {
-    private readonly IRepository<Product> _repository;
-    private readonly IProductRepository _productRepository;
+    private readonly IProductRepository _repository;
 
-    public ProductController(IRepository<Product> repository, IProductRepository productRepository)
+    public ProductController(IProductRepository repository)
     {
         _repository = repository;
-        _productRepository = productRepository;
     }
 
     [HttpGet]
@@ -41,7 +39,7 @@ public class ProductController : ControllerBase
     [HttpGet("products/{id:int}")]
     public ActionResult<Product> GetProductsByCategory(int id)
     {
-        var products = _productRepository.GetProductsByCategory(id);
+        var products = _repository.GetProductsByCategory(id);
 
         if (products == null)
         {
